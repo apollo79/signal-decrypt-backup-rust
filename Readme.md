@@ -3,7 +3,7 @@ A port of [https://github.com/mossblaser/signal_for_android_decryption](signal_f
 
 This port was done for speed improvements and easier integration with wasm.
 
-The cli version is available at [https://git.duskflower.dev/duskflower/signal-decrypt-backup-rust](duskflower/signal-decrypt-backup-rust)
+The wasm version is available at [https://git.duskflower.dev/duskflower/signal-decrypt-backup-wasm](duskflower/signal-decrypt-backup-wasm)
 
 ## Build
 `cargo build`
