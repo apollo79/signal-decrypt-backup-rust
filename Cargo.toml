@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 description = "Get all the data from your Signal backup."
 repository = "https://git.duskflower.dev/duskflower/signal-decrypt-backup-rust"
-license = "MIT"
+license = "GPL-3-only"
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
