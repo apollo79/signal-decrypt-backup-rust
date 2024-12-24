@@ -1,9 +1,9 @@
 # signal-decrypt-backup-rust
 A port of [https://github.com/mossblaser/signal_for_android_decryption](signal_for_android_decryption) in Rust.
 
-This port was done for speed improvements and easier integration with wasm.
+This port was done for speed improvements and easier integration with wasm. It was almost completely done by an AI.
 
-The wasm version is available at [https://git.duskflower.dev/duskflower/signal-decrypt-backup-wasm](duskflower/signal-decrypt-backup-wasm)
+The wasm version, which works quite differently but is based on this one, is available at [https://git.duskflower.dev/duskflower/signal-decrypt-backup-wasm](duskflower/signal-decrypt-backup-wasm)
 
 ## Build
 `cargo build`

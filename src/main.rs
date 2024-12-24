@@ -114,6 +114,7 @@ fn parameter_to_native_type(
         Ok(None)
     }
 }
+
 fn decrypt_frame<R: Read>(
     backup_file: &mut R,
     hmac_key: &[u8],
@@ -139,11 +140,19 @@ fn decrypt_frame<R: Read>(
         Some(1) => {
             let mut encrypted_length = [0u8; 4];
             backup_file.read_exact(&mut encrypted_length)?;
+
+            println!("encrypted length bytes: {:02x?}", encrypted_length);
+
             Mac::update(&mut hmac, &encrypted_length);
 
             let mut decrypted_length = encrypted_length;
             ctr.apply_keystream(&mut decrypted_length);
-            u32::from_be_bytes(decrypted_length)
+
+            println!("decrypted length bytes: {:02x?}", decrypted_length);
+
+            let len = u32::from_be_bytes(decrypted_length);
+            println!("length: {}", len);
+            len
         }
         Some(v) => {
             return Err(io::Error::new(
@@ -170,10 +179,20 @@ fn decrypt_frame<R: Read>(
     Mac::update(&mut hmac, ciphertext_buf);
     let our_mac = hmac.finalize().into_bytes();
 
+    println!(
+        "Their MAC: {:02x?}, Our MAC: {:02x?}",
+        their_mac,
+        &our_mac[..10]
+    );
+
     if their_mac != our_mac[..10] {
         return Err(io::Error::new(
             io::ErrorKind::InvalidData,
-            "MAC verification failed",
+            format!(
+                "MAC verification failed. Their MAC: {:02x?}, Our MAC: {:02x?}",
+                their_mac,
+                &our_mac[..10]
+            ),
         ));
     }
 
@@ -219,12 +238,17 @@ fn decrypt_frame_payload<R: Read>(
 
     let mut their_mac = [0u8; 10];
     backup_file.read_exact(&mut their_mac)?;
+
     let our_mac = hmac.finalize().into_bytes();
 
     if &their_mac != &our_mac[..10] {
         return Err(io::Error::new(
             io::ErrorKind::InvalidData,
-            "Bad MAC found. Passphrase may be incorrect or file corrupted or incompatible.",
+            format!(
+                "payload: MAC verification failed. Their MAC: {:02x?}, Our MAC: {:02x?}",
+                their_mac,
+                &our_mac[..10]
+            ),
         ));
     }
 
@@ -241,6 +265,7 @@ where
 {
     let mut backup_file = BufReader::with_capacity(32 * 1024, backup_file);
     let total_size = backup_file.seek(SeekFrom::End(0))?;
+    // reset the reader
     backup_file.seek(SeekFrom::Start(0))?;
     let mut last_percentage = 0;
 
